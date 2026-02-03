@@ -8,6 +8,8 @@ import { ExplainCommand } from '../src/commands/ExplainCommand.js';
 import { AuditCommand } from '../src/commands/AuditCommand.js';
 import { ReadmeCommand } from '../src/commands/ReadmeCommand.js';
 import { GenerateCommand } from '../src/commands/GenerateCommand.js';
+import { RefactorCommand } from '../src/commands/RefactorCommand.js';
+import { DockerCommand } from '../src/commands/DockerCommand.js';
 
 const program = new Command();
 
@@ -49,5 +51,14 @@ program.command('generate <description>')
   .alias('g') // Para que puedas usar 'devflow g "Login"' como en Angular
   .description('Genera código (Componentes, Servicios, Clases) adaptado a tu Framework')
   .action(async (desc) => new GenerateCommand().execute(desc));
+
+program.command('refactor <file>')
+  .description('Reescribe código sucio aplicando principios SOLID y Clean Code')
+  .option('-g, --goal <goal>', 'Objetivo específico (ej: "Convertir a Async/Await")', 'Clean Code & SOLID')
+  .action(async (file, cmd) => new RefactorCommand().execute(file, cmd.goal));
+
+program.command('docker')
+  .description('Genera Dockerfile y docker-compose.yml listos para producción')
+  .action(async () => new DockerCommand().execute());
 
 program.parse(process.argv);
