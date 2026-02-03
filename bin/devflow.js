@@ -5,6 +5,9 @@ import { CommitCommand } from '../src/commands/CommitCommand.js';
 import { TestCommand } from '../src/commands/TestCommand.js';
 import { ScaffoldCommand } from '../src/commands/ScaffoldCommand.js';
 import { ExplainCommand } from '../src/commands/ExplainCommand.js';
+import { AuditCommand } from '../src/commands/AuditCommand.js';
+import { ReadmeCommand } from '../src/commands/ReadmeCommand.js';
+import { GenerateCommand } from '../src/commands/GenerateCommand.js';
 
 const program = new Command();
 
@@ -13,29 +16,38 @@ program
   .description('Tu Tech Lead IA Modular y Escalable v2.0')
   .version('2.0.0');
 
-// 1. REVIEW
 program.command('review')
   .description('Analiza cambios pendientes en Git')
   .action(async () => new ReviewCommand().execute());
 
-// 2. COMMIT
 program.command('commit')
   .description('Genera mensajes de commit semánticos')
   .action(async () => new CommitCommand().execute());
 
-// 3. TEST
 program.command('test <file>')
   .description('Genera tests unitarios para un archivo')
   .action(async (file) => new TestCommand().execute(file));
 
-// 4. SCAFFOLD
 program.command('scaffold <idea>')
   .description('Genera estructura de proyecto')
   .action(async (idea) => new ScaffoldCommand().execute(idea));
 
-// 5. EXPLAIN
 program.command('explain <file>')
   .description('Explica un archivo local')
   .action(async (file) => new ExplainCommand().execute(file));
+
+program.command('audit')
+  .description('Genera un informe profesional (Markdown/LaTeX)')
+  .option('-f, --format <type>', 'Formato de salida', 'markdown')
+  .action(async (cmd) => new AuditCommand().execute(cmd.format));
+
+program.command('readme')
+  .description('✨ Genera un README.md profesional automáticamente analizando tu proyecto')
+  .action(async () => new ReadmeCommand().execute());
+
+program.command('generate <description>')
+  .alias('g') // Para que puedas usar 'devflow g "Login"' como en Angular
+  .description('Genera código (Componentes, Servicios, Clases) adaptado a tu Framework')
+  .action(async (desc) => new GenerateCommand().execute(desc));
 
 program.parse(process.argv);
