@@ -1,20 +1,31 @@
 {
   "name": "copilot-devflow",
-  "version": "1.0.0",
-  "description": "CLI para GitHub Copilot Challenge",
+  "version": "2.0.0",
+  "description": "DevFlow CLI: The AI Tech Lead for your Terminal",
   "main": "bin/devflow.js",
   "type": "module",
   "bin": {
     "devflow": "./bin/devflow.js"
   },
-  "keywords": [],
+  "keywords": [
+    "cli",
+    "copilot",
+    "ai",
+    "automation"
+  ],
   "author": "Ronald Azuero",
   "license": "ISC",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
   "dependencies": {
     "chalk": "^5.3.0",
     "clipboardy": "^4.0.0",
     "commander": "^11.1.0",
     "execa": "^8.0.0",
     "ora": "^7.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
