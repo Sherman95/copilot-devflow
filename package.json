@@ -1,0 +1,20 @@
+{
+  "name": "copilot-devflow",
+  "version": "1.0.0",
+  "description": "CLI para GitHub Copilot Challenge",
+  "main": "bin/devflow.js",
+  "type": "module",
+  "bin": {
+    "devflow": "./bin/devflow.js"
+  },
+  "keywords": [],
+  "author": "Ronald Azuero",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "clipboardy": "^4.0.0",
+    "commander": "^11.1.0",
+    "execa": "^8.0.0",
+    "ora": "^7.0.1"
+  }
+}
