@@ -40,6 +40,9 @@ devflow audit --all --format markdown --language en --out .devflow/judge/audit.m
 # Optional: PDF-ready audit (LaTeX output you can compile to PDF)
 devflow audit --all --format pdf --language en --out .devflow/judge/audit.tex --no-clipboard --dry-run --max-chars 8000
 
+# After Copilot generates the final LaTeX report (saved as .tex), you can compile it:
+devflow pdf .devflow/judge/audit.tex
+
 # PR title + description
 devflow pr --all --out .devflow/judge/pr.md --no-clipboard --dry-run --max-chars 8000
 

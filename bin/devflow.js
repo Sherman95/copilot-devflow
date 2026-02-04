@@ -13,6 +13,7 @@ import { DockerCommand } from '../src/commands/DockerCommand.js';
 import { DoctorCommand } from '../src/commands/DoctorCommand.js';
 import { DemoCommand } from '../src/commands/DemoCommand.js';
 import { PRCommand } from '../src/commands/PRCommand.js';
+import { PdfCommand } from '../src/commands/PdfCommand.js';
 
 const program = new Command();
 
@@ -172,5 +173,11 @@ program.command('demo')
   .option('--out <file>', 'Write the generated prompt to a file')
   .option('--no-clipboard', 'Do not copy the prompt to clipboard')
   .action(async (cmd) => new DemoCommand().execute(cmd));
+
+program.command('pdf <file>')
+  .description('Compiles a local LaTeX .tex file to PDF using pdflatex/xelatex')
+  .option('--engine <name>', 'Engine to use: pdflatex | xelatex')
+  .option('--out <file>', 'Copy the generated PDF to this path')
+  .action(async (file, cmd) => new PdfCommand().execute(file, cmd));
 
 program.parse(process.argv);

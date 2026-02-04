@@ -177,6 +177,11 @@ Example:
 devflow audit --all --format markdown --language en --max-chars 8000 --dry-run
 ```
 
+To get an actual PDF:
+1) Run `devflow audit --format pdf --dry-run` to generate a prompt that asks Copilot for PDF-ready LaTeX.
+2) Paste it into `gh copilot`, save the result as `audit.tex`.
+3) Compile locally: `devflow pdf audit.tex`
+
 ### `devflow commit`
 
 Generates a Conventional Commit message prompt from the staged diff.
