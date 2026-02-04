@@ -10,55 +10,75 @@ import { ReadmeCommand } from '../src/commands/ReadmeCommand.js';
 import { GenerateCommand } from '../src/commands/GenerateCommand.js';
 import { RefactorCommand } from '../src/commands/RefactorCommand.js';
 import { DockerCommand } from '../src/commands/DockerCommand.js';
+import { DoctorCommand } from '../src/commands/DoctorCommand.js';
 
 const program = new Command();
 
 program
   .name('devflow')
-  .description('Tu Tech Lead IA Modular y Escalable v2.0')
-  .version('2.0.0');
+  .description('AI workflow orchestrator powered by GitHub Copilot CLI')
+  .version('2.0.0')
+  .showHelpAfterError()
+  .showSuggestionAfterError();
+
+program.command('doctor')
+  .description('Checks prerequisites (git, gh, gh-copilot) and prints a quick setup guide')
+  .action(async () => new DoctorCommand().execute());
 
 program.command('review')
-  .description('Analiza cambios pendientes en Git')
-  .action(async () => new ReviewCommand().execute());
+  .description('Reviews pending Git changes (quality + security prompt)')
+  .option('--staged', 'Review staged changes only')
+  .option('--unstaged', 'Review unstaged changes only')
+  .option('--all', 'Review both staged and unstaged changes (default)')
+  .option('--files <paths>', 'Comma-separated file paths to filter (passed to git diff)')
+  .option('--unified <n>', 'Number of diff context lines', (v) => Number(v))
+  .option('--max-chars <n>', 'Max characters to include in the prompt', (v) => Number(v))
+  .action(async (cmd) => new ReviewCommand().execute(cmd));
 
 program.command('commit')
-  .description('Genera mensajes de commit semánticos')
+  .description('Generates a Conventional Commit message from your staged diff')
   .action(async () => new CommitCommand().execute());
 
 program.command('test <file>')
-  .description('Genera tests unitarios para un archivo')
+  .description('Generates a unit test prompt for a given file')
   .action(async (file) => new TestCommand().execute(file));
 
 program.command('scaffold <idea>')
-  .description('Genera estructura de proyecto')
+  .description('Bootstraps a project structure from a natural-language idea')
   .action(async (idea) => new ScaffoldCommand().execute(idea));
 
 program.command('explain <file>')
-  .description('Explica un archivo local')
+  .description('Explains a local file (onboarding/legacy-friendly)')
   .action(async (file) => new ExplainCommand().execute(file));
 
 program.command('audit')
-  .description('Genera un informe profesional (Markdown/LaTeX)')
-  .option('-f, --format <type>', 'Formato de salida', 'markdown')
-  .action(async (cmd) => new AuditCommand().execute(cmd.format));
+  .description('Generates a security/compliance audit prompt (Markdown/LaTeX)')
+  .option('-f, --format <type>', 'Output format: markdown | latex', 'markdown')
+  .option('--staged', 'Audit staged changes only (default)')
+  .option('--unstaged', 'Audit unstaged changes only')
+  .option('--all', 'Audit both staged and unstaged changes')
+  .option('--files <paths>', 'Comma-separated file paths to filter (passed to git diff)')
+  .option('--unified <n>', 'Number of diff context lines', (v) => Number(v))
+  .option('--max-chars <n>', 'Max characters to include in the prompt', (v) => Number(v))
+  .option('--language <lang>', 'Report language: en | es', 'en')
+  .action(async (cmd) => new AuditCommand().execute(cmd));
 
 program.command('readme')
-  .description('✨ Genera un README.md profesional automáticamente analizando tu proyecto')
+  .description('Generates a professional README by analyzing your project')
   .action(async () => new ReadmeCommand().execute());
 
 program.command('generate <description>')
   .alias('g') // Para que puedas usar 'devflow g "Login"' como en Angular
-  .description('Genera código (Componentes, Servicios, Clases) adaptado a tu Framework')
+  .description('Generates context-aware code tailored to your stack')
   .action(async (desc) => new GenerateCommand().execute(desc));
 
 program.command('refactor <file>')
-  .description('Reescribe código sucio aplicando principios SOLID y Clean Code')
-  .option('-g, --goal <goal>', 'Objetivo específico (ej: "Convertir a Async/Await")', 'Clean Code & SOLID')
+  .description('Refactors code using Clean Code & SOLID (preserving behavior)')
+  .option('-g, --goal <goal>', 'Specific refactor goal (e.g. "Convert to async/await")', 'Clean Code & SOLID')
   .action(async (file, cmd) => new RefactorCommand().execute(file, cmd.goal));
 
 program.command('docker')
-  .description('Genera Dockerfile y docker-compose.yml listos para producción')
+  .description('Generates a production baseline Dockerfile + docker-compose.yml')
   .action(async () => new DockerCommand().execute());
 
 program.parse(process.argv);
