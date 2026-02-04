@@ -82,16 +82,16 @@ npm link
 devflow doctor
 
 # Review both staged and unstaged changes (do not launch Copilot)
-devflow review --all --dry-run
+devflow r -A -n
 
 # Generate an audit prompt in Markdown
-devflow audit --all --format markdown --language en --dry-run
+devflow a -A -f markdown -l en -n
 
 # Generate a Conventional Commit message prompt (staged diff)
-devflow commit --dry-run
+devflow cm -n
 
 # Export the prompt to a file (and skip clipboard)
-devflow review --all --out .devflow/prompts/review.txt --no-clipboard --dry-run
+devflow r -A -o .devflow/prompts/review.txt -N -n
 ```
 
 ---
@@ -108,10 +108,10 @@ devflow demo --setup
 Then `cd` into the printed demo directory and run:
 
 ```bash
-devflow review --all --out .devflow/judge/review.txt --no-clipboard --dry-run --max-chars 6000
-devflow audit  --all --format markdown --language en --out .devflow/judge/audit.md --no-clipboard --dry-run --max-chars 8000
-devflow commit --out .devflow/judge/commit.txt --no-clipboard --dry-run
-devflow pr     --all --out .devflow/judge/pr.md --no-clipboard --dry-run --max-chars 8000
+devflow r  -A -o .devflow/judge/review.txt -N -n -m 6000
+devflow a  -A -f markdown -l en -o .devflow/judge/audit.md -N -n -m 8000
+devflow cm    -o .devflow/judge/commit.txt -N -n
+devflow p  -A -o .devflow/judge/pr.md -N -n -m 8000
 ```
 
 What you should notice:
@@ -159,7 +159,7 @@ Options:
 Example:
 
 ```bash
-devflow review --all --files src/app.js,src/auth.js --unified 5 --max-chars 6000 --dry-run
+devflow r -A -F src/app.js,src/auth.js -u 5 -m 6000 -n
 ```
 
 ### `devflow audit`
@@ -174,13 +174,13 @@ Options:
 Example:
 
 ```bash
-devflow audit --all --format markdown --language en --max-chars 8000 --dry-run
+devflow a -A -f markdown -l en -m 8000 -n
 ```
 
 To get an actual PDF:
-1) Run `devflow audit --format pdf --dry-run` to generate a prompt that asks Copilot for PDF-ready LaTeX.
+1) Run `devflow a -f pdf -n` to generate a prompt that asks Copilot for PDF-ready LaTeX.
 2) Paste it into `gh copilot`, save the result as `audit.tex`.
-3) Compile locally: `devflow pdf audit.tex`
+3) Compile locally: `devflow tex audit.tex` (or `devflow pdf audit.tex`)
 
 ### `devflow commit`
 
@@ -188,7 +188,7 @@ Generates a Conventional Commit message prompt from the staged diff.
 
 ```bash
 git add -A
-devflow commit --dry-run
+devflow cm -n
 ```
 
 ### `devflow pr`
@@ -205,49 +205,49 @@ Options:
 Example:
 
 ```bash
-devflow pr --all --out .devflow/judge/pr.md --no-clipboard --dry-run
+devflow p -A -o .devflow/judge/pr.md -N -n
 ```
 
 ### `devflow test <file>`
 
 ```bash
-devflow test src/utils/PromptHandler.js --dry-run
+devflow t src/utils/PromptHandler.js -n
 ```
 
 ### `devflow explain <file>`
 
 ```bash
-devflow explain src/services/GitService.js --dry-run
+devflow x src/services/GitService.js -n
 ```
 
 ### `devflow readme`
 
 ```bash
-devflow readme --dry-run
+devflow rm -n
 ```
 
 ### `devflow generate "<requirement>"`
 
 ```bash
-devflow generate "JWT Authentication Service with refresh tokens" --dry-run
+devflow g "JWT Authentication Service with refresh tokens" -n
 ```
 
 ### `devflow refactor <file>`
 
 ```bash
-devflow refactor src/commands/ReviewCommand.js --goal "Extract helper functions" --dry-run
+devflow rf src/commands/ReviewCommand.js --goal "Extract helper functions" -n
 ```
 
 ### `devflow docker`
 
 ```bash
-devflow docker --dry-run
+devflow dk -n
 ```
 
 ### `devflow scaffold "<idea>"`
 
 ```bash
-devflow scaffold "REST API with Express and MongoDB" --dry-run
+devflow s "REST API with Express and MongoDB" -n
 ```
 
 ---
