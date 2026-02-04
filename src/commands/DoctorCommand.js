@@ -28,6 +28,8 @@ export class DoctorCommand {
 
     let hasErrors = false;
 
+    const isWindows = process.platform === 'win32';
+
     // Node version
     const major = Number(process.versions.node.split('.')[0]);
     if (Number.isFinite(major) && major >= 18) {
@@ -49,6 +51,18 @@ export class DoctorCommand {
     } else {
       fail('git is not installed');
       hasErrors = true;
+    }
+
+    // PowerShell 7 (pwsh) - recommended on Windows for Copilot CLI tool execution
+    if (isWindows) {
+      if (await commandExists('pwsh')) {
+        ok('PowerShell 7 (pwsh) is installed');
+      } else {
+        warn(
+          'PowerShell 7 (pwsh) not found. Some GitHub Copilot CLI tool actions may fail on Windows. ' +
+            'Install: https://aka.ms/powershell (or run DevFlow with --dry-run to avoid launching Copilot).',
+        );
+      }
     }
 
     // GitHub CLI
@@ -86,7 +100,12 @@ export class DoctorCommand {
     console.log(chalk.white('Quick setup (if needed):'));
     console.log(chalk.dim('  1) gh auth login'));
     console.log(chalk.dim('  2) gh extension install github/gh-copilot'));
-    console.log(chalk.dim('  3) devflow review'));
+    if (isWindows) {
+      console.log(chalk.dim('  3) (Recommended) Install PowerShell 7: https://aka.ms/powershell'));
+      console.log(chalk.dim('  4) devflow review'));
+    } else {
+      console.log(chalk.dim('  3) devflow review'));
+    }
 
     if (hasErrors) process.exitCode = 1;
   }

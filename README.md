@@ -129,6 +129,8 @@ Full judge guide: see [docs/JUDGE.md](docs/JUDGE.md)
 
 Checks prerequisites (Node, git, `gh`, auth status, and Copilot extension) and prints quick setup guidance.
 
+Note (Windows): GitHub Copilot CLI tool actions may require PowerShell 7 (`pwsh`). If you see `pwsh.exe` errors, install it from https://aka.ms/powershell or use `-n` (dry run).
+
 ```bash
 devflow doctor
 ```
