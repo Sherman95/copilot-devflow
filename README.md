@@ -165,7 +165,7 @@ devflow review --all --files src/app.js,src/auth.js --unified 5 --max-chars 6000
 ### `devflow audit`
 
 Options:
-- `--format <markdown|latex>` output format
+- `--format <markdown|latex|pdf>` output format (pdf generates LaTeX intended for PDF compilation)
 - `--language <en|es>` report language
 - `--pick-files` interactively select files to include
 - `--staged|--unstaged|--all`, `--files`, `--unified`, `--max-chars`, `--dry-run`

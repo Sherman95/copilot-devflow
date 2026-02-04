@@ -7,7 +7,9 @@ import { pickFilesInteractively } from '../utils/FilePicker.js';
 export class AuditCommand {
   async execute(arg = 'markdown') {
     const options = typeof arg === 'string' ? { format: arg } : (arg ?? {});
-    const format = options.format || 'markdown';
+    const rawFormat = (options.format || 'markdown').toLowerCase();
+    const format = rawFormat === 'pdf' ? 'latex' : rawFormat;
+    const formatLabel = rawFormat.toUpperCase();
     const config = ConfigService.load({ cwd: process.cwd() });
 
     const language = (options.language || config?.defaults?.language || 'en').toLowerCase();
@@ -47,7 +49,7 @@ export class AuditCommand {
       paths = picked;
     }
 
-    console.log(chalk.magenta(`🧐 Generating audit report prompt (${format.toUpperCase()}, scope: ${scope})...`));
+    console.log(chalk.magenta(`🧐 Generating audit report prompt (${formatLabel}, scope: ${scope})...`));
 
     const diff = await GitService.getCombinedDiff({
       staged: scope === 'all' || scope === 'staged',
@@ -86,12 +88,21 @@ STRUCTURE:
 \\begin{table} ... \\end{table}
 \\section{Optimization Proposals}
 `;
+
+      if (rawFormat === 'pdf') {
+        template += `
+PDF NOTE:
+- Produce LaTeX that compiles cleanly with pdflatex/xelatex.
+- Avoid external images. Keep it self-contained.
+- Include a title, author, and date.
+`;
+      }
     }
 
     const prompt = `
   ACT AS: Senior Software Architect & Security Auditor.
   TASK: Write a comprehensive security + code quality audit report for the following changes.
-  FORMAT: ${format.toUpperCase()} (Strictly follow the structure below).
+  FORMAT: ${formatLabel} (Strictly follow the structure below).
   LANGUAGE: ${language === 'es' ? 'Spanish (Professional/Formal)' : 'English (Professional/Formal)'}.
 
 ${template}
