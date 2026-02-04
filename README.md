@@ -1,109 +1,61 @@
 # DevFlow CLI
 
-**Automated Workflow Orchestrator powered by GitHub Copilot CLI.**  
-Context-aware automation for Code Review, Testing, Documentation, and Technical Debt Reduction.
+AI workflow orchestrator powered by GitHub Copilot CLI.
+
+DevFlow is a terminal-first developer tool that:
+- gathers local repository context (git diffs, file paths, project structure),
+- builds structured prompts for common SDLC tasks, and
+- optionally launches `gh copilot` so you can execute the workflow with full context.
 
 ![License](https://img.shields.io/badge/License-ISC-blue.svg)
 ![Node](https://img.shields.io/badge/Node-%3E%3D18-success.svg)
 ![Version](https://img.shields.io/badge/version-2.0.0-lightgrey.svg)
+[![CI](https://github.com/Sherman95/copilot-devflow/actions/workflows/ci.yml/badge.svg)](https://github.com/Sherman95/copilot-devflow/actions/workflows/ci.yml)
 
 ---
 
-## 1. Executive Summary
+## Overview
 
-**DevFlow CLI** is an engineering tool designed to bridge the gap between local development environments and Large Language Models (LLMs) through **GitHub Copilot CLI**. Unlike a standard chat interface, DevFlow acts as an agent inside your terminal: it gathers relevant context (git diffs, file paths, project structure) and prepares prompts to accelerate complex development tasks.
-
-DevFlow is built for high-performance engineering teams: it helps enforce code quality standards, reduces technical debt via guided refactors, and automates documentation through context-aware generation.
+Unlike a chat interface, DevFlow operates inside your terminal and focuses on repeatable workflows: review, audit, tests, docs, refactors, scaffolding, and code generation. DevFlow does not silently modify your repository; it prepares high-quality prompts and keeps the developer in control.
 
 ---
 
-## 2. Core Capabilities
+## Key Features
 
-DevFlow provides a unified interface for common SDLC tasks.
+### Quality and security
 
-### 2.1 Quality Assurance & Security
+- `devflow review` performs a senior-level code review prompt for staged/unstaged diffs.
+- `devflow audit` generates a formal security + code-quality audit prompt in Markdown or LaTeX.
+- Prompts are protected by default with automatic secret redaction.
 
-- **Automated Code Review** (`devflow review`)  
-  Performs a static analysis of staged/unstaged git changes. It validates logic, identifies anti-patterns, and checks for potential security vulnerabilities before code is committed.
+### Engineering productivity
 
-- **Security & Compliance Audit** (`devflow audit --format <markdown|latex>`)  
-  Generates formal audit reports suitable for technical leadership.
-  - **Output Formats:** Markdown (`markdown`) or LaTeX (`latex`).
-  - **Content:** Executive summary, risk table, detailed findings, and remediation roadmap.
-
-- **Automated Refactoring** (`devflow refactor <file> --goal <goal>`)  
-  Rewrites “dirty” code applying SOLID and Clean Code principles while preserving business logic.
-
-### 2.2 Development Acceleration
-
-- **Context-Aware Code Generation** (`devflow generate "<requirement>"`)  
-  Implements functional logic adapted to the detected stack (Angular/React/Vue/Node/Python) by inspecting your project.
-  - Example: `devflow generate "JWT Authentication Service with refresh tokens"`
-
-- **Unit Test Fabrication** (`devflow test <file>`)  
-  Generates a comprehensive unit-test prompt for a target file, focused on edge cases, error handling, and success paths.
-
-- **Project Scaffolding** (`devflow scaffold "<idea>"`)  
-  Bootstraps project architecture from a natural language description.
-
-- **Infrastructure as Code** (`devflow docker`)  
-  Generates `Dockerfile` and `docker-compose.yml` suitable as a production baseline.
-
-### 2.3 Documentation & Engineering Operations
-
-- **Documentation Synthesis** (`devflow readme`)  
-  Analyzes your repository structure and generates a professional README.
-
-- **Semantic Commit Management** (`devflow commit`)  
-  Enforces Conventional Commits by generating semantic commit messages from `git diff`.
-
-- **Code Explanation** (`devflow explain <file>`)  
-  Produces step-by-step explanations of complex files for onboarding and legacy understanding.
+- `devflow commit` generates Conventional Commit messages from staged changes.
+- `devflow test <file>` creates unit test prompts for a target file.
+- `devflow explain <file>` produces onboarding-friendly explanations.
+- `devflow generate "<requirement>"` creates context-aware code prompts tailored to your stack.
+- `devflow refactor <file>` prepares a refactor prompt with a specific goal.
+- `devflow docker` produces a baseline production Docker configuration prompt.
+- `devflow scaffold "<idea>"` outputs shell commands (platform-aware) to scaffold a project.
 
 ---
 
-## 3. How It Works
+## How It Works
 
-DevFlow prepares a structured prompt, copies it to your clipboard, prints a backup in the terminal, and then launches GitHub Copilot CLI (`gh copilot`) so you can paste and run with full context.
-
----
-
-## 4. Technical Architecture
-
-DevFlow is organized as a modular, layered CLI.
-
-```text
-copilot-devflow/
-├── bin/
-│   └── devflow.js                 # CLI entry point & command registration
-├── src/
-│   ├── commands/                  # Command pattern implementations
-│   │   ├── AuditCommand.js
-│   │   ├── CommitCommand.js
-│   │   ├── DockerCommand.js
-│   │   ├── ExplainCommand.js
-│   │   ├── GenerateCommand.js
-│   │   ├── ReadmeCommand.js
-│   │   ├── RefactorCommand.js
-│   │   ├── ReviewCommand.js
-│   │   ├── ScaffoldCommand.js
-│   │   └── TestCommand.js
-│   ├── services/
-│   │   └── GitService.js          # Git diff/context gathering
-│   └── utils/
-│       └── PromptHandler.js       # Clipboard + Copilot CLI launcher
-└── tests/                         # Jest tests
-```
+1. DevFlow collects context (for example, `git diff` and file metadata).
+2. DevFlow constructs a structured prompt (role, task, output format, constraints).
+3. DevFlow copies the prompt to your clipboard and prints a backup.
+4. DevFlow launches `gh copilot` unless you use `--dry-run`.
 
 ---
 
-## 5. Installation
+## Installation
 
 ### Prerequisites
 
-- Node.js (v18+)
+- Node.js 18+
 - Git
-- GitHub CLI authenticated + Copilot extension installed
+- GitHub CLI (`gh`) with the Copilot extension installed and authenticated
 
 ```bash
 gh auth login
@@ -113,7 +65,7 @@ gh extension install github/gh-copilot
 ### Setup
 
 ```bash
-git clone https://github.com/ronaldazuero/copilot-devflow.git
+git clone https://github.com/Sherman95/copilot-devflow.git
 cd copilot-devflow
 npm install
 npm link
@@ -121,36 +73,186 @@ npm link
 
 ---
 
-## 6. Usage Reference
+## Quick Start
 
-| Command | Arguments | Description |
-| --- | --- | --- |
-| `devflow review` | - | Audits pending git changes for quality/security. |
-| `devflow commit` | - | Generates a semantic commit message from changes. |
-| `devflow audit` | `--format <markdown\|latex>` | Generates a formal audit report. |
-| `devflow test` | `<file>` | Generates a unit test prompt for a specific file. |
-| `devflow generate` | `"<requirement>"` | Generates functional code adapted to your project. |
-| `devflow refactor` | `<file>` `--goal "<goal>"` | Refactors code applying SOLID/Clean Code. |
-| `devflow docker` | - | Generates Docker baseline configuration. |
-| `devflow scaffold` | `"<idea>"` | Bootstraps project structure from a description. |
-| `devflow explain` | `<file>` | Explains the logic flow of a file. |
-| `devflow readme` | - | Auto-generates project documentation. |
+```bash
+devflow doctor
 
----
+# Review both staged and unstaged changes (do not launch Copilot)
+devflow review --all --dry-run
 
-## 7. Contributing
+# Generate an audit prompt in Markdown
+devflow audit --all --format markdown --language en --dry-run
 
-- Run tests: `npm test`
-- Keep changes focused and add/adjust tests when needed.
+# Generate a Conventional Commit message prompt (staged diff)
+devflow commit --dry-run
+```
 
 ---
 
-## 8. License
+## Command Reference
 
-Released under the **ISC License**.
+### `devflow doctor`
+
+Checks prerequisites (Node, git, `gh`, auth status, and Copilot extension) and prints quick setup guidance.
+
+```bash
+devflow doctor
+```
+
+### `devflow demo`
+
+Judge-mode helper that prints a 60-second script. With `--setup`, it creates a temporary demo repository containing both staged and unstaged changes.
+
+```bash
+devflow demo --setup
+```
+
+### `devflow review`
+
+Options:
+- `--staged` review staged changes only
+- `--unstaged` review unstaged changes only
+- `--all` review both (default)
+- `--files <a.js,b.js>` filter by file paths
+- `--unified <n>` diff context lines
+- `--max-chars <n>` max prompt size
+- `--dry-run` do not launch `gh copilot`
+
+Example:
+
+```bash
+devflow review --all --files src/app.js,src/auth.js --unified 5 --max-chars 6000 --dry-run
+```
+
+### `devflow audit`
+
+Options:
+- `--format <markdown|latex>` output format
+- `--language <en|es>` report language
+- `--staged|--unstaged|--all`, `--files`, `--unified`, `--max-chars`, `--dry-run`
+
+Example:
+
+```bash
+devflow audit --all --format markdown --language en --max-chars 8000 --dry-run
+```
+
+### `devflow commit`
+
+Generates a Conventional Commit message prompt from the staged diff.
+
+```bash
+git add -A
+devflow commit --dry-run
+```
+
+### `devflow test <file>`
+
+```bash
+devflow test src/utils/PromptHandler.js --dry-run
+```
+
+### `devflow explain <file>`
+
+```bash
+devflow explain src/services/GitService.js --dry-run
+```
+
+### `devflow readme`
+
+```bash
+devflow readme --dry-run
+```
+
+### `devflow generate "<requirement>"`
+
+```bash
+devflow generate "JWT Authentication Service with refresh tokens" --dry-run
+```
+
+### `devflow refactor <file>`
+
+```bash
+devflow refactor src/commands/ReviewCommand.js --goal "Extract helper functions" --dry-run
+```
+
+### `devflow docker`
+
+```bash
+devflow docker --dry-run
+```
+
+### `devflow scaffold "<idea>"`
+
+```bash
+devflow scaffold "REST API with Express and MongoDB" --dry-run
+```
 
 ---
 
-## 9. Author
+## Safety: Secret Redaction
 
-**Ronald Azuero** (2026)
+DevFlow applies best-effort secret redaction before copying/printing prompts.
+
+- Default: enabled
+- Disable: set `DEVFLOW_REDACT_SECRETS=false`
+
+---
+
+## Dry Run Mode
+
+Use `--dry-run` to prevent launching `gh copilot` (the prompt is still copied/printed). You can also set `DEVFLOW_DRY_RUN=true`.
+
+---
+
+## Technical Architecture
+
+```text
+copilot-devflow/
+├── .github/workflows/ci.yml       # CI (npm test)
+├── bin/
+│   └── devflow.js                 # CLI entry point & command registration
+├── src/
+│   ├── commands/                  # Command pattern implementations
+│   │   ├── AuditCommand.js
+│   │   ├── CommitCommand.js
+│   │   ├── DemoCommand.js
+│   │   ├── DoctorCommand.js
+│   │   ├── DockerCommand.js
+│   │   ├── ExplainCommand.js
+│   │   ├── GenerateCommand.js
+│   │   ├── ReadmeCommand.js
+│   │   ├── RefactorCommand.js
+│   │   ├── ReviewCommand.js
+│   │   ├── ScaffoldCommand.js
+│   │   └── TestCommand.js
+│   ├── services/
+│   │   └── GitService.js          # git diff + context helpers
+│   └── utils/
+│       ├── PromptHandler.js       # clipboard + optional Copilot launcher
+│       └── SecretRedactor.js      # best-effort secret redaction
+└── tests/                         # Jest tests
+```
+
+---
+
+## Contributing
+
+```bash
+npm test
+```
+
+Please keep changes focused and add/adjust tests when applicable.
+
+---
+
+## License
+
+ISC.
+
+---
+
+## Author
+
+Ronald Azuero
