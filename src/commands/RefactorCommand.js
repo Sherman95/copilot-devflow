@@ -36,7 +36,7 @@ ${code.substring(0, 3000)}
 OUTPUT: Only the refactored code block.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'refactor' });
     await PromptHandler.launchCopilot();
   }
 }

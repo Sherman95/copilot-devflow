@@ -1,0 +1,18 @@
+{
+  "defaults": {
+    "unified": 5,
+    "maxChars": 8000,
+    "language": "en",
+    "reviewScope": "all",
+    "auditScope": "staged"
+  },
+  "output": {
+    "out": null,
+    "noClipboard": false
+  },
+  "templates": {
+    "wrapper": "You are GitHub Copilot CLI. Follow instructions precisely.\nContext: {{CWD}}\n---\n{{PROMPT}}\n---\n",
+    "review": "ACT AS: Principal Engineer.\nTASK: Provide a concise, high-signal review.\n\n{{PROMPT}}",
+    "audit": "ACT AS: Security Lead.\nTASK: Produce a formal security + quality audit.\n\n{{PROMPT}}"
+  }
+}

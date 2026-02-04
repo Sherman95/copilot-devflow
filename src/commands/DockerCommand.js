@@ -47,7 +47,7 @@ REQUIREMENTS:
 OUTPUT: Provide the content for these 3 files clearly separated.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'docker' });
     await PromptHandler.launchCopilot();
   }
 }

@@ -17,7 +17,7 @@ Requirements:
 4) Just output the commands, no explanation.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'scaffold' });
     await PromptHandler.launchCopilot();
   }
 }

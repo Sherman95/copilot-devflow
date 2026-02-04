@@ -22,7 +22,7 @@ CHANGES:
 ${diff.substring(0, 2000)}
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'commit' });
     await PromptHandler.launchCopilot();
   }
 }

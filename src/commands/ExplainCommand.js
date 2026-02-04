@@ -23,7 +23,7 @@ Act as a Senior Engineer.
 3. Suggest one optimization.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'explain' });
     await PromptHandler.launchCopilot();
   }
 }

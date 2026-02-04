@@ -54,7 +54,7 @@ INSTRUCTIONS:
 OUTPUT: Just the code and filename.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'generate' });
     await PromptHandler.launchCopilot();
   }
 }

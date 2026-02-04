@@ -26,7 +26,7 @@ Write comprehensive unit tests for this file.
 Just show the code.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'test' });
     await PromptHandler.launchCopilot();
   }
 }

@@ -50,7 +50,7 @@ ${pkgJson.substring(0, 500)}
 OUTPUT: Only the raw Markdown code.
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, { command: 'readme' });
     await PromptHandler.launchCopilot();
   }
 }

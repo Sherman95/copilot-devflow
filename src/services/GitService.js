@@ -41,4 +41,45 @@ export class GitService {
     if (parts.length === 0) return null;
     return parts.join('\n\n');
   }
+
+  static async getChangedFiles(options = {}) {
+    const staged = options.staged ?? true;
+    const unstaged = options.unstaged ?? true;
+
+    const files = new Set();
+
+    const addLines = (stdout) => {
+      for (const line of String(stdout || '').split(/\r?\n/)) {
+        const trimmed = line.trim();
+        if (trimmed) files.add(trimmed);
+      }
+    };
+
+    try {
+      if (staged) {
+        const { stdout } = await execa('git', ['diff', '--cached', '--name-only']);
+        addLines(stdout);
+      }
+      if (unstaged) {
+        const { stdout } = await execa('git', ['diff', '--name-only']);
+        addLines(stdout);
+      }
+    } catch {
+      // ignore and attempt fallback
+    }
+
+    if (files.size === 0) {
+      try {
+        const { stdout } = await execa('git', ['status', '--porcelain']);
+        for (const line of String(stdout || '').split(/\r?\n/)) {
+          const match = line.match(/^..\s+(.*)$/);
+          if (match?.[1]) files.add(match[1].trim());
+        }
+      } catch {
+        return [];
+      }
+    }
+
+    return Array.from(files);
+  }
 }

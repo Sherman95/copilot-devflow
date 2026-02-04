@@ -1,23 +1,58 @@
 import chalk from 'chalk';
 import { PromptHandler } from '../utils/PromptHandler.js';
 import { GitService } from '../services/GitService.js';
+import { ConfigService } from '../services/ConfigService.js';
+import { pickFilesInteractively } from '../utils/FilePicker.js';
 
 export class AuditCommand {
   async execute(arg = 'markdown') {
     const options = typeof arg === 'string' ? { format: arg } : (arg ?? {});
     const format = options.format || 'markdown';
-    const language = (options.language || 'en').toLowerCase();
-    const scope = options.scope || (options.all ? 'all' : (options.unstaged ? 'unstaged' : 'staged'));
-    const paths = typeof options.files === 'string'
+    const config = ConfigService.load({ cwd: process.cwd() });
+
+    const language = (options.language || config?.defaults?.language || 'en').toLowerCase();
+
+    const configuredScope = config?.defaults?.auditScope;
+    const scope = options.scope || (options.all ? 'all' : (options.unstaged ? 'unstaged' : (options.staged ? 'staged' : (configuredScope || 'staged'))));
+
+    const unified = options.unified ?? config?.defaults?.unified;
+    const maxChars = options.maxChars ?? config?.defaults?.maxChars;
+
+    let paths = typeof options.files === 'string'
       ? options.files.split(',').map((s) => s.trim()).filter(Boolean)
       : [];
+
+    const shouldPickFiles = Boolean(options.pickFiles) && paths.length === 0;
+    if (shouldPickFiles) {
+      const candidates = await GitService.getChangedFiles({
+        staged: scope === 'all' || scope === 'staged',
+        unstaged: scope === 'all' || scope === 'unstaged',
+      });
+
+      if (candidates.length === 0) {
+        console.log(chalk.yellow('⚠ No changed files found to pick from.'));
+        return;
+      }
+
+      const picked = await pickFilesInteractively({
+        title: `Pick files to audit (scope: ${scope}):`,
+        files: candidates,
+      });
+
+      if (picked.length === 0) {
+        console.log(chalk.yellow('⚠ No files selected.'));
+        return;
+      }
+
+      paths = picked;
+    }
 
     console.log(chalk.magenta(`🧐 Generating audit report prompt (${format.toUpperCase()}, scope: ${scope})...`));
 
     const diff = await GitService.getCombinedDiff({
       staged: scope === 'all' || scope === 'staged',
       unstaged: scope === 'all' || scope === 'unstaged',
-      unified: options.unified,
+      unified,
       paths,
     });
 
@@ -62,10 +97,14 @@ STRUCTURE:
 ${template}
 
 CODE TO AUDIT:
-${context.substring(0, Number(options.maxChars) || 6000)}
+${context.substring(0, Number(maxChars) || 6000)}
     `.trim();
 
-    await PromptHandler.copyAndNotify(prompt);
+    await PromptHandler.copyAndNotify(prompt, {
+      command: 'audit',
+      out: options.out,
+      noClipboard: options.noClipboard,
+    });
     await PromptHandler.launchCopilot();
   }
 }
