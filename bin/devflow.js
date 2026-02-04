@@ -12,6 +12,7 @@ import { RefactorCommand } from '../src/commands/RefactorCommand.js';
 import { DockerCommand } from '../src/commands/DockerCommand.js';
 import { DoctorCommand } from '../src/commands/DoctorCommand.js';
 import { DemoCommand } from '../src/commands/DemoCommand.js';
+import { PRCommand } from '../src/commands/PRCommand.js';
 
 const program = new Command();
 
@@ -61,6 +62,23 @@ program.command('review')
   .option('--unified <n>', 'Number of diff context lines', (v) => Number(v))
   .option('--max-chars <n>', 'Max characters to include in the prompt', (v) => Number(v))
   .action(async (cmd) => new ReviewCommand().execute(cmd));
+
+program.command('pr')
+  .description('Generates a high-quality GitHub Pull Request title + description from git changes')
+  .option('--pick-files', 'Interactively select files to include in the diff')
+  .option('--dry-run', 'Do not launch `gh copilot`')
+  .option('-c, --config <path>', 'Path to devflow config file (JSON)')
+  .option('--out <file>', 'Write the generated prompt to a file')
+  .option('--no-clipboard', 'Do not copy the prompt to clipboard')
+  .option('--staged', 'Use staged changes only')
+  .option('--unstaged', 'Use unstaged changes only')
+  .option('--all', 'Use both staged and unstaged changes (default)')
+  .option('--files <paths>', 'Comma-separated file paths to filter (passed to git diff)')
+  .option('--unified <n>', 'Number of diff context lines', (v) => Number(v))
+  .option('--max-chars <n>', 'Max characters to include in the prompt', (v) => Number(v))
+  .option('--language <lang>', 'Language: en | es', 'en')
+  .option('--title <text>', 'Optional title hint to steer the PR title')
+  .action(async (cmd) => new PRCommand().execute(cmd));
 
 program.command('commit')
   .description('Generates a Conventional Commit message from your staged diff')

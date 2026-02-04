@@ -2,6 +2,8 @@
 
 AI workflow orchestrator powered by GitHub Copilot CLI.
 
+Note: This repository is **DevFlow CLI** (`copilot-devflow`) and is **not affiliated** with other tools also named "DevFlow".
+
 DevFlow is a terminal-first developer tool that:
 - gathers local repository context (git diffs, file paths, project structure),
 - builds structured prompts for common SDLC tasks, and
@@ -37,6 +39,7 @@ Unlike a chat interface, DevFlow operates inside your terminal and focuses on re
 - `devflow refactor <file>` prepares a refactor prompt with a specific goal.
 - `devflow docker` produces a baseline production Docker configuration prompt.
 - `devflow scaffold "<idea>"` outputs shell commands (platform-aware) to scaffold a project.
+- `devflow pr` generates a GitHub Pull Request title + description from your changes.
 
 ---
 
@@ -108,6 +111,7 @@ Then `cd` into the printed demo directory and run:
 devflow review --all --out .devflow/judge/review.txt --no-clipboard --dry-run --max-chars 6000
 devflow audit  --all --format markdown --language en --out .devflow/judge/audit.md --no-clipboard --dry-run --max-chars 8000
 devflow commit --out .devflow/judge/commit.txt --no-clipboard --dry-run
+devflow pr     --all --out .devflow/judge/pr.md --no-clipboard --dry-run --max-chars 8000
 ```
 
 What you should notice:
@@ -180,6 +184,23 @@ Generates a Conventional Commit message prompt from the staged diff.
 ```bash
 git add -A
 devflow commit --dry-run
+```
+
+### `devflow pr`
+
+Generates PR title options + a complete Markdown PR body from your staged/unstaged changes.
+
+Options:
+- `--staged|--unstaged|--all`, `--files`, `--unified`, `--max-chars`, `--dry-run`
+- `--pick-files` interactively select files to include
+- `--language <en|es>`
+- `--title <text>` optional title hint
+- `--out <file>`, `--no-clipboard`, `--config <path>`
+
+Example:
+
+```bash
+devflow pr --all --out .devflow/judge/pr.md --no-clipboard --dry-run
 ```
 
 ### `devflow test <file>`

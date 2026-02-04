@@ -37,6 +37,9 @@ devflow review --all --out .devflow/judge/review.txt --no-clipboard --dry-run --
 # Formal audit prompt
 devflow audit --all --format markdown --language en --out .devflow/judge/audit.md --no-clipboard --dry-run --max-chars 8000
 
+# PR title + description
+devflow pr --all --out .devflow/judge/pr.md --no-clipboard --dry-run --max-chars 8000
+
 # Conventional Commit prompt from staged diff
 devflow commit --out .devflow/judge/commit.txt --no-clipboard --dry-run
 ```
