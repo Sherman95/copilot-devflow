@@ -11,6 +11,7 @@ import { GenerateCommand } from '../src/commands/GenerateCommand.js';
 import { RefactorCommand } from '../src/commands/RefactorCommand.js';
 import { DockerCommand } from '../src/commands/DockerCommand.js';
 import { DoctorCommand } from '../src/commands/DoctorCommand.js';
+import { DemoCommand } from '../src/commands/DemoCommand.js';
 
 const program = new Command();
 
@@ -18,8 +19,16 @@ program
   .name('devflow')
   .description('AI workflow orchestrator powered by GitHub Copilot CLI')
   .version('2.0.0')
+  .option('--dry-run', 'Do not launch `gh copilot` (still prints/copies the prompt)')
   .showHelpAfterError()
   .showSuggestionAfterError();
+
+program.hook('preAction', (thisCommand, actionCommand) => {
+  const globalOpts = thisCommand?.opts?.() ?? {};
+  const actionOpts = actionCommand?.opts?.() ?? {};
+  const dryRun = Boolean(globalOpts.dryRun || actionOpts.dryRun);
+  process.env.DEVFLOW_DRY_RUN = dryRun ? 'true' : 'false';
+});
 
 program.command('doctor')
   .description('Checks prerequisites (git, gh, gh-copilot) and prints a quick setup guide')
@@ -27,6 +36,7 @@ program.command('doctor')
 
 program.command('review')
   .description('Reviews pending Git changes (quality + security prompt)')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .option('--staged', 'Review staged changes only')
   .option('--unstaged', 'Review unstaged changes only')
   .option('--all', 'Review both staged and unstaged changes (default)')
@@ -37,22 +47,27 @@ program.command('review')
 
 program.command('commit')
   .description('Generates a Conventional Commit message from your staged diff')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async () => new CommitCommand().execute());
 
 program.command('test <file>')
   .description('Generates a unit test prompt for a given file')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async (file) => new TestCommand().execute(file));
 
 program.command('scaffold <idea>')
   .description('Bootstraps a project structure from a natural-language idea')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async (idea) => new ScaffoldCommand().execute(idea));
 
 program.command('explain <file>')
   .description('Explains a local file (onboarding/legacy-friendly)')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async (file) => new ExplainCommand().execute(file));
 
 program.command('audit')
   .description('Generates a security/compliance audit prompt (Markdown/LaTeX)')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .option('-f, --format <type>', 'Output format: markdown | latex', 'markdown')
   .option('--staged', 'Audit staged changes only (default)')
   .option('--unstaged', 'Audit unstaged changes only')
@@ -65,20 +80,31 @@ program.command('audit')
 
 program.command('readme')
   .description('Generates a professional README by analyzing your project')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async () => new ReadmeCommand().execute());
 
 program.command('generate <description>')
   .alias('g') // Para que puedas usar 'devflow g "Login"' como en Angular
   .description('Generates context-aware code tailored to your stack')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async (desc) => new GenerateCommand().execute(desc));
 
 program.command('refactor <file>')
   .description('Refactors code using Clean Code & SOLID (preserving behavior)')
   .option('-g, --goal <goal>', 'Specific refactor goal (e.g. "Convert to async/await")', 'Clean Code & SOLID')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async (file, cmd) => new RefactorCommand().execute(file, cmd.goal));
 
 program.command('docker')
   .description('Generates a production baseline Dockerfile + docker-compose.yml')
+  .option('--dry-run', 'Do not launch `gh copilot`')
   .action(async () => new DockerCommand().execute());
+
+program.command('demo')
+  .description('Judge-mode demo: prints a 60-second script (optionally generates a demo repo)')
+  .option('--setup', 'Create a temporary demo repository with staged + unstaged changes')
+  .option('--dir <path>', 'Use an existing directory (defaults to current working directory)')
+  .option('--dry-run', 'Do not launch `gh copilot` (recommended for demos)', true)
+  .action(async (cmd) => new DemoCommand().execute(cmd));
 
 program.parse(process.argv);

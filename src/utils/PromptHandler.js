@@ -24,6 +24,10 @@ export class PromptHandler {
   }
 
   static async launchCopilot() {
+    if (process.env.DEVFLOW_DRY_RUN === 'true') {
+      console.log(chalk.dim('ℹ Dry run: not launching `gh copilot`.'));
+      return;
+    }
     await execa('gh', ['copilot'], { stdio: 'inherit' });
   }
 }
