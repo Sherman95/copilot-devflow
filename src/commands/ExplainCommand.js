@@ -8,12 +8,12 @@ export class ExplainCommand {
     const fullPath = path.resolve(process.cwd(), filePath);
     
     if (!fs.existsSync(fullPath)) {
-      console.log(chalk.red(`❌ Archivo no encontrado.`));
+      console.log(chalk.red('❌ File not found.'));
       return;
     }
 
     const relativePath = path.relative(process.cwd(), fullPath);
-    console.log(chalk.blue(`🧠 Analizando lógica de ${relativePath}...`));
+    console.log(chalk.blue(`🧠 Explaining ${relativePath}...`));
 
     const prompt = `
 @${relativePath} 

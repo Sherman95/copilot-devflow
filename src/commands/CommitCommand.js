@@ -4,12 +4,12 @@ import { GitService } from '../services/GitService.js';
 
 export class CommitCommand {
   async execute() {
-    console.log(chalk.blue('✍️  Generando mensaje de commit...'));
+    console.log(chalk.blue('✍️  Generating commit message prompt...'));
 
     const diff = await GitService.getDiff(true); // true = --cached (staged files)
 
     if (!diff) {
-      console.log(chalk.yellow('⚠ No hay archivos en Stage. Ejecuta "git add" primero.'));
+      console.log(chalk.yellow('⚠ No staged changes found. Run: git add -A'));
       return;
     }
 

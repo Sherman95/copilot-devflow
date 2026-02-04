@@ -3,14 +3,25 @@ import { PromptHandler } from '../utils/PromptHandler.js';
 import { GitService } from '../services/GitService.js';
 
 export class AuditCommand {
-  async execute(format = 'markdown') {
-    console.log(chalk.magenta(`🧐 AUDITORÍA PRO: Generando informe en formato ${format.toUpperCase()}...`));
+  async execute(arg = 'markdown') {
+    const options = typeof arg === 'string' ? { format: arg } : (arg ?? {});
+    const format = options.format || 'markdown';
+    const language = (options.language || 'en').toLowerCase();
+    const scope = options.scope || (options.all ? 'all' : (options.unstaged ? 'unstaged' : 'staged'));
+    const paths = typeof options.files === 'string'
+      ? options.files.split(',').map((s) => s.trim()).filter(Boolean)
+      : [];
 
-    // Obtenemos los cambios cacheados (staged)
-    const diff = await GitService.getDiff(true);
-    
-    // Si no hay cambios, avisamos pero no fallamos (para que analice estructura general si se desea)
-    const context = diff || "No hay cambios específicos en git (staged). Analiza la estructura lógica general o asume un análisis de código limpio.";
+    console.log(chalk.magenta(`🧐 Generating audit report prompt (${format.toUpperCase()}, scope: ${scope})...`));
+
+    const diff = await GitService.getCombinedDiff({
+      staged: scope === 'all' || scope === 'staged',
+      unstaged: scope === 'all' || scope === 'unstaged',
+      unified: options.unified,
+      paths,
+    });
+
+    const context = diff || 'No git changes found for the selected scope. Provide a general audit of architecture, security posture, and likely risk areas based on the repository structure.';
 
     let template = '';
 
@@ -43,15 +54,15 @@ STRUCTURE:
     }
 
     const prompt = `
-ACT AS: Senior Software Architect & Security Auditor.
-TASK: Write a comprehensive audit report for the following code changes.
-FORMAT: ${format.toUpperCase()} (Strictly follow the structure below).
-LANGUAGE: Spanish (Professional/Formal).
+  ACT AS: Senior Software Architect & Security Auditor.
+  TASK: Write a comprehensive security + code quality audit report for the following changes.
+  FORMAT: ${format.toUpperCase()} (Strictly follow the structure below).
+  LANGUAGE: ${language === 'es' ? 'Spanish (Professional/Formal)' : 'English (Professional/Formal)'}.
 
 ${template}
 
 CODE TO AUDIT:
-${context.substring(0, 3000)}
+${context.substring(0, Number(options.maxChars) || 6000)}
     `.trim();
 
     await PromptHandler.copyAndNotify(prompt);

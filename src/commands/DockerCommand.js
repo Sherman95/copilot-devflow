@@ -5,7 +5,7 @@ import { execa } from 'execa';
 
 export class DockerCommand {
   async execute() {
-    console.log(chalk.cyan(`🐳 DevOps IA: Contenedorizando tu aplicación...`));
+    console.log(chalk.cyan('🐳 Generating Docker configuration prompt...'));
 
     // 1. Detectar dependencias para elegir la imagen base correcta
     let context = '';

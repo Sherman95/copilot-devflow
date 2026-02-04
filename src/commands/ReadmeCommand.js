@@ -6,7 +6,7 @@ import { execa } from 'execa';
 
 export class ReadmeCommand {
   async execute() {
-    console.log(chalk.magenta('📝 Analizando proyecto para generar documentación "Best-Seller"...'));
+    console.log(chalk.magenta('📝 Analyzing project to generate a professional README prompt...'));
 
     // 1. Obtener estructura de archivos (sin node_modules ni .git)
     // Usamos 'git ls-files' que es más limpio que 'tree'

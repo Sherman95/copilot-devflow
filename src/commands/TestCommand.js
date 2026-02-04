@@ -9,12 +9,12 @@ export class TestCommand {
     
     // Validación básica
     if (!fs.existsSync(fullPath)) {
-      console.log(chalk.red(`❌ Error: No encuentro el archivo "${filePath}"`));
+      console.log(chalk.red(`❌ File not found: "${filePath}"`));
       return;
     }
 
     const relativePath = path.relative(process.cwd(), fullPath);
-    console.log(chalk.magenta(`🧪 Diseñando tests para: ${relativePath}...`));
+    console.log(chalk.magenta(`🧪 Designing tests for: ${relativePath}...`));
 
     const prompt = `
 @${relativePath}

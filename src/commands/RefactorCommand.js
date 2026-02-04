@@ -8,15 +8,15 @@ export class RefactorCommand {
     const fullPath = path.resolve(process.cwd(), filePath);
     
     if (!fs.existsSync(fullPath)) {
-      console.log(chalk.red(`❌ Archivo no encontrado: ${filePath}`));
+      console.log(chalk.red(`❌ File not found: ${filePath}`));
       return;
     }
 
     const code = fs.readFileSync(fullPath, 'utf-8');
     const relativePath = path.relative(process.cwd(), fullPath);
 
-    console.log(chalk.blue(`🧹 Cirujano IA: Preparando refactorización para ${relativePath}...`));
-    console.log(chalk.dim(`   Objetivo: ${goal}`));
+    console.log(chalk.blue(`🧹 Preparing refactor prompt for ${relativePath}...`));
+    console.log(chalk.dim(`   Goal: ${goal}`));
 
     const prompt = `
 ACT AS: Senior Software Architect & Clean Code Evangelist.
